@@ -40,6 +40,7 @@ public class AccountingLedgerApp {
                 break;
             case "P":
                 //make payment!
+                makePayment(scanner,ledger);
                 break;
             case "L":
                 //display ledger!
@@ -106,21 +107,22 @@ public class AccountingLedgerApp {
             String editDateChoice = scanner.nextLine().trim().toUpperCase();
 
             if(editDateChoice.startsWith("Y")) {
-                System.out.print("\nWhat is the date of the deposit?\nType Here (yyyy-MM-dd): ");
+                System.out.print("\nWhat is the date of the deposit?\nType Here (MM/dd/yyyy): ");
                 String userDate = scanner.nextLine();
 
-                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm a");
+                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
                 date = LocalDate.parse(userDate, dateFormat);
 
-                System.out.print("What is the time of the deposit?\nType Here (HH:mm a): ");
-                String userTime = scanner.nextLine();
+                System.out.print("What is the time of the deposit?\nType Here (e.g. 14:45): ");
+                String userTime = scanner.nextLine().trim().toUpperCase();
+                DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
                 time = LocalTime.parse(userTime, timeFormat);
 
             }
 
             System.out.println("\n==[Deposit Entry Preview]==");
-            System.out.printf("%tD|%tr|%s|%s|%f", date, time, description, name, amount);
+            System.out.printf("%tD|%tr|%s|%s|$%.2f", date, time, description, name, amount);
             System.out.println("\n------\n");
             System.out.print("Is this information correct?\n[Y]Yes [N]No\nType Here: ");
             String correctChoice = scanner.nextLine().trim().toUpperCase();
@@ -129,7 +131,7 @@ public class AccountingLedgerApp {
                 try {
                     BufferedWriter buffWriter = new BufferedWriter(new FileWriter("src/main/resources/transactions.csv", true));
                     buffWriter.newLine();
-                    buffWriter.write(String.format("%tF|%tT|%s|%s|$%.2f", date, time, description, name, amount));
+                    buffWriter.write(String.format("%tF|%tT|%s|%s|%.2f", date, time, description, name, amount));
                     buffWriter.close();
                     System.out.print("----\nLedger Updated!\nRecord another deposit?\n[Y]Yes [N]No\nType Here: ");
                     String anotherChoice = scanner.nextLine().trim().toUpperCase();
@@ -138,6 +140,72 @@ public class AccountingLedgerApp {
                     }
                 } catch (IOException e) {
                         System.out.println(e.getMessage());
+                }
+
+            }
+
+
+        }
+
+
+
+
+    }
+    public static void makePayment(Scanner scanner,ArrayList<Transaction> ledger){
+        //ask for info, append to file
+        boolean keepGoing = true;
+        while(keepGoing) {
+            System.out.println("        ==[Record a Payment]==        ");
+            System.out.println("Please enter the payment information:");
+            System.out.print("Vendor Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Description: ");
+            String description = scanner.nextLine();
+
+            System.out.print("Payment Amount: $");
+            double amount = scanner.nextDouble();
+            scanner.nextLine(); //crlf
+
+            LocalDate date = LocalDate.now();
+            LocalTime time = LocalTime.now();
+            System.out.printf("Current Date/Time: %tD %tr\nEdit date and time?\n[Y]Yes [N]No\nType Here: ", date, time);
+            String editDateChoice = scanner.nextLine().trim().toUpperCase();
+
+            if(editDateChoice.startsWith("Y")) {
+                System.out.print("\nWhat is the date of the payment?\nType Here (MM/dd/yyyy): ");
+                String userDate = scanner.nextLine();
+
+                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+                date = LocalDate.parse(userDate, dateFormat);
+
+                System.out.print("What is the time of the payment?\nType Here (e.g. 16:30): ");
+                String userTime = scanner.nextLine().trim().toUpperCase();
+                DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
+                time = LocalTime.parse(userTime, timeFormat);
+
+            }
+
+            System.out.println("\n==[Payment Entry Preview]==");
+            System.out.printf("%tD|%tr|%s|%s|-$%.2f", date, time, description, name, amount);
+            System.out.println("\n------\n");
+            System.out.print("Is this information correct?\n[Y]Yes [N]No\nType Here: ");
+            String correctChoice = scanner.nextLine().trim().toUpperCase();
+            if (correctChoice.startsWith("Y")){
+
+                try {
+                    BufferedWriter buffWriter = new BufferedWriter(new FileWriter("src/main/resources/transactions.csv", true));
+                    buffWriter.newLine();
+                    buffWriter.write(String.format("%tF|%tT|%s|%s|-%.2f", date, time, description, name, amount));
+                    buffWriter.close();
+                    System.out.print("----\nLedger Updated!\nRecord another payment?\n[Y]Yes [N]No\nType Here: ");
+                    String anotherChoice = scanner.nextLine().trim().toUpperCase();
+                    if(anotherChoice.startsWith("N")){
+                        keepGoing = false;
+                    }
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
                 }
 
             }
