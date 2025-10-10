@@ -44,6 +44,7 @@ public class AccountingLedgerApp {
                 break;
             case "L":
                 //display ledger!
+                displayAll(ledger);
                 break;
             case "X":
                 System.out.println("Exiting - Have a Nice Day!");
@@ -55,6 +56,7 @@ public class AccountingLedgerApp {
         }
         System.out.println("\n----");
         System.out.println("Press [ENTER] to continue..");
+        scanner.nextLine();
     }
     public static ArrayList<Transaction> loadLedger(){
         ArrayList<Transaction> ledger = new ArrayList<>();
@@ -92,7 +94,7 @@ public class AccountingLedgerApp {
             System.out.println("         ==[Add a Deposit]==         ");
             System.out.println("Please enter the deposit information:");
             System.out.print("Vendor Name: ");
-            String name = scanner.nextLine();
+            String vendor = scanner.nextLine();
 
             System.out.print("Description: ");
             String description = scanner.nextLine();
@@ -121,8 +123,9 @@ public class AccountingLedgerApp {
 
             }
 
+
             System.out.println("\n==[Deposit Entry Preview]==");
-            System.out.printf("%tD|%tr|%s|%s|$%.2f", date, time, description, name, amount);
+            System.out.printf("%tD|%tr|%s|%s|$%.2f", date, time, description, vendor, amount);
             System.out.println("\n------\n");
             System.out.print("Is this information correct?\n[Y]Yes [N]No\nType Here: ");
             String correctChoice = scanner.nextLine().trim().toUpperCase();
@@ -131,7 +134,7 @@ public class AccountingLedgerApp {
                 try {
                     BufferedWriter buffWriter = new BufferedWriter(new FileWriter("src/main/resources/transactions.csv", true));
                     buffWriter.newLine();
-                    buffWriter.write(String.format("%tF|%tT|%s|%s|%.2f", date, time, description, name, amount));
+                    buffWriter.write(String.format("%tF|%tT|%s|%s|%.2f", date, time, description,vendor, amount));
                     buffWriter.close();
                     System.out.print("----\nLedger Updated!\nRecord another deposit?\n[Y]Yes [N]No\nType Here: ");
                     String anotherChoice = scanner.nextLine().trim().toUpperCase();
@@ -143,6 +146,9 @@ public class AccountingLedgerApp {
                 }
 
             }
+            System.out.println("\n----");
+            System.out.println("Press [ENTER] to continue..");
+            scanner.nextLine();
 
 
         }
@@ -158,7 +164,7 @@ public class AccountingLedgerApp {
             System.out.println("        ==[Record a Payment]==        ");
             System.out.println("Please enter the payment information:");
             System.out.print("Vendor Name: ");
-            String name = scanner.nextLine();
+            String vendor = scanner.nextLine();
 
             System.out.print("Description: ");
             String description = scanner.nextLine();
@@ -188,7 +194,7 @@ public class AccountingLedgerApp {
             }
 
             System.out.println("\n==[Payment Entry Preview]==");
-            System.out.printf("%tD|%tr|%s|%s|-$%.2f", date, time, description, name, amount);
+            System.out.printf("%tD|%tr|%s|%s|-$%.2f", date, time, description, vendor, amount);
             System.out.println("\n------\n");
             System.out.print("Is this information correct?\n[Y]Yes [N]No\nType Here: ");
             String correctChoice = scanner.nextLine().trim().toUpperCase();
@@ -197,7 +203,7 @@ public class AccountingLedgerApp {
                 try {
                     BufferedWriter buffWriter = new BufferedWriter(new FileWriter("src/main/resources/transactions.csv", true));
                     buffWriter.newLine();
-                    buffWriter.write(String.format("%tF|%tT|%s|%s|-%.2f", date, time, description, name, amount));
+                    buffWriter.write(String.format("%tF|%tT|%s|%s|-%.2f", date, time, description, vendor, amount));
                     buffWriter.close();
                     System.out.print("----\nLedger Updated!\nRecord another payment?\n[Y]Yes [N]No\nType Here: ");
                     String anotherChoice = scanner.nextLine().trim().toUpperCase();
@@ -209,11 +215,29 @@ public class AccountingLedgerApp {
                 }
 
             }
-
+            System.out.println("\n----");
+            System.out.println("Press [ENTER] to continue..");
+            scanner.nextLine();
 
         }
 
 
+
+
+    }
+    public static void displayAll(ArrayList<Transaction> ledger){
+        System.out.println("\n==[All Ledger Transaction Records]==");
+        for(Transaction t : ledger){
+            displayTransaction(t.getDate(),t.getTime(),t.getDescription(),t.getVendor(),t.getAmount());
+        }
+        System.out.println("------------");
+    }
+    public static void displayTransaction(LocalDate date,LocalTime time,String description,String vendor,double amount){
+        if (amount >= 0){
+            System.out.printf("%tD|%tr|%s|%s|$%.2f\n", date, time, description, vendor, amount);
+        }else{
+            System.out.printf("%tD|%tr|%s|%s|-$%.2f\n", date, time, description, vendor, Math.abs(amount));
+        }
 
 
     }
