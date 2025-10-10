@@ -169,7 +169,7 @@ public class AccountingLedgerApp {
             System.out.print("Description: ");
             String description = scanner.nextLine();
 
-            System.out.print("Payment Amount: $");
+            System.out.print("Payment Amount: -$");
             double amount = scanner.nextDouble();
             scanner.nextLine(); //crlf
 
