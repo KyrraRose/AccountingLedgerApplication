@@ -324,7 +324,7 @@ public class AccountingLedgerApp {
         System.out.println("  [P] Previous Month");
         System.out.println("  [Y] Previous Year");
         System.out.println("  [V] Search by Vendor");
-        System.out.println("  [S] Custom Search");
+        System.out.println("  [C] Custom Search");
         System.out.println("  [B] Back");
         //actually numbered options might be better - less mental load by typists
     }
@@ -360,11 +360,9 @@ public class AccountingLedgerApp {
                 System.out.println("\n==[Report: Vendor Search]==");
                 displayReport(ledger,"Vendor",vendorSearch);
                 break;
-            case "S":
-                //Custom Search
-                //String type = scanner.nextLine();
-                //System.out.printf("\n==[Report: %s Search]==",type);
-                System.out.println("Custom functionality coming soon");
+            case "C":
+                System.out.println("\n==[Report: Custom Search]==");
+                customSearch(scanner,ledger);
                 break;
             case "B":
                 System.out.println("Returning [HOME]!");
@@ -372,6 +370,66 @@ public class AccountingLedgerApp {
             default:
                 System.out.println("Input not recognized, try again!");
         }
+    }
+    public static void customSearch(Scanner scanner,ArrayList<Transaction> ledger){
+        //this one might be a bit chunky
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        //info gathering
+        System.out.println("Please enter the following filters:");
+        System.out.print("Start Date (MM/dd/yyyy): ");
+        String userStartDate = scanner.nextLine();
+        LocalDate startDate = LocalDate.parse(userStartDate, dateFormat);
+
+        System.out.print("End Date (MM/dd/yyyy): ");
+        String userEndDate = scanner.nextLine();
+        LocalDate endDate = LocalDate.parse(userEndDate, dateFormat);
+
+        System.out.print("Description: ");
+        String userDesc = scanner.nextLine().trim().toLowerCase();
+
+        System.out.print("Vendor: ");
+        String userVendor = scanner.nextLine().trim().toLowerCase();
+
+        System.out.print("Amount: $");
+        double userAmount = scanner.nextDouble();
+        scanner.nextLine();
+
+        filteredSearch(ledger,startDate,endDate,userDesc,userVendor,userAmount);
+
+
+    }
+    public static void filteredSearch(ArrayList<Transaction> ledger,LocalDate startDate,LocalDate endDate,String userDesc,String userVendor, double userAmount){
+        ArrayList<Transaction> filtered = new ArrayList<>();
+
+        for (Transaction t : ledger){
+            if (startDate != null && t.getDate().isAfter(startDate)){
+                filtered.add(t);
+            }
+            if(endDate != null && t.getDate().isAfter(endDate)){
+                filtered.remove(t);
+            }
+        }
+        if (!filtered.isEmpty()){
+            for (Transaction t : filtered){
+                if (!userDesc.equals("\n") && !t.getDescription().toLowerCase().contains(userDesc)){
+                    filtered.remove(t);
+                }else if (!userVendor.equals("\n") && !t.getVendor().toLowerCase().contains(userVendor)){
+                    filtered.remove(t);
+                }else if ( t.getAmount() != userAmount ){
+                    filtered.remove(t);
+                }
+            }
+
+        }
+        if (!filtered.isEmpty()){
+            System.out.println("==[Filtered Search Results]==");
+            for (Transaction t : filtered){
+                displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }
+        }else{
+            System.out.println("[No results found, try again]");
+        }
+
     }
 
 
