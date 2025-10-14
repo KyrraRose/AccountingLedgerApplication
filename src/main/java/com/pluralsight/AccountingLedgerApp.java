@@ -378,11 +378,18 @@ public class AccountingLedgerApp {
         System.out.println("Please enter the following filters:");
         System.out.print("Start Date (MM/dd/yyyy): ");
         String userStartDate = scanner.nextLine();
-        LocalDate startDate = LocalDate.parse(userStartDate, dateFormat);
+        LocalDate startDate = LocalDate.parse("01/01/1900", dateFormat);
+        if (!userStartDate.isEmpty()) {
+            startDate = LocalDate.parse(userStartDate, dateFormat);
+        }
 
         System.out.print("End Date (MM/dd/yyyy): ");
         String userEndDate = scanner.nextLine();
-        LocalDate endDate = LocalDate.parse(userEndDate, dateFormat);
+        LocalDate endDate = LocalDate.now();
+        if (!userEndDate.isEmpty()) {
+            endDate = LocalDate.parse(userEndDate, dateFormat);
+        }
+
 
         System.out.print("Description: ");
         String userDesc = scanner.nextLine().trim().toLowerCase();
@@ -391,10 +398,13 @@ public class AccountingLedgerApp {
         String userVendor = scanner.nextLine().trim().toLowerCase();
 
         System.out.print("Amount: $");
-        double userAmount = scanner.nextDouble();
-        scanner.nextLine();
+        String userAmount = scanner.nextLine();
+        double amount = 0;
+        if (!userAmount.isEmpty()) {
+            amount = Double.parseDouble(userAmount);
+        }
 
-        filteredSearch(ledger,startDate,endDate,userDesc,userVendor,userAmount);
+        filteredSearch(ledger,startDate,endDate,userDesc,userVendor,amount);
 
 
     }
@@ -402,20 +412,21 @@ public class AccountingLedgerApp {
         ArrayList<Transaction> filtered = new ArrayList<>();
 
         for (Transaction t : ledger){
-            if (startDate != null && t.getDate().isAfter(startDate)){
+            if (t.getDate().isAfter(startDate)){
                 filtered.add(t);
             }
-            if(endDate != null && t.getDate().isAfter(endDate)){
+            if(t.getDate().isAfter(endDate)){
                 filtered.remove(t);
             }
         }
+
         if (!filtered.isEmpty()){
             for (Transaction t : filtered){
-                if (!userDesc.equals("\n") && !t.getDescription().toLowerCase().contains(userDesc)){
+                if (!userDesc.isEmpty() && !t.getDescription().toLowerCase().contains(userDesc)){
                     filtered.remove(t);
-                }else if (!userVendor.equals("\n") && !t.getVendor().toLowerCase().contains(userVendor)){
+                }else if (!userVendor.isEmpty() && !t.getVendor().toLowerCase().contains(userVendor)){
                     filtered.remove(t);
-                }else if ( t.getAmount() != userAmount ){
+                }else if (userAmount != 0 && t.getAmount() != userAmount ){
                     filtered.remove(t);
                 }
             }
