@@ -59,6 +59,7 @@ public class AccountingLedgerApp {
         System.out.println("Press [ENTER] to continue..");
         scanner.nextLine();
     }
+
     public static ArrayList<Transaction> loadLedger(){
         ArrayList<Transaction> ledger = new ArrayList<>();
         try {
@@ -88,6 +89,7 @@ public class AccountingLedgerApp {
         return ledger;
 
     }
+
     public static void addDeposit(Scanner scanner,ArrayList<Transaction> ledger){
         //ask for info, append to file
         boolean keepGoing = true;
@@ -158,6 +160,7 @@ public class AccountingLedgerApp {
 
 
     }
+
     public static void makePayment(Scanner scanner,ArrayList<Transaction> ledger){
         //ask for info, append to file
         boolean keepGoing = true;
@@ -226,13 +229,21 @@ public class AccountingLedgerApp {
 
 
     }
-    public static void displayAll(ArrayList<Transaction> ledger){
-        System.out.println("\n==[All Ledger Transaction Records]==");
+
+    public static void displayAll(ArrayList<Transaction> ledger, String type){
+        //Let's not make three separate methods:
         for(Transaction t : ledger){
-            displayTransaction(t.getDate(),t.getTime(),t.getDescription(),t.getVendor(),t.getAmount());
+            if (type.equals("All")) {
+                displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }else if (type.equals("Deposit") && t.getAmount()>0){
+                displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }else if (type.equals("Payment") && t.getAmount()<0){
+                displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }
         }
         System.out.println("------------");
     }
+
     public static void displayTransaction(LocalDate date,LocalTime time,String description,String vendor,double amount){
         if (amount >= 0){
             System.out.printf("%tD|%tr|%s|%s|$%.2f\n", date, time, description, vendor, amount);
@@ -261,15 +272,19 @@ public class AccountingLedgerApp {
         switch (choice) {
             case "A":
                 //Display All
-                displayAll(ledger);
+                System.out.println("\n==[All Ledger Transaction Records]==");
+                displayAll(ledger,"All");
                 break;
             case "D":
                 //Display Deposits
-
+                System.out.println("\n==[All Ledger Deposit Records]==");
+                displayAll(ledger,"Deposit");
 
                 break;
             case "P":
                 //Display Payments
+                System.out.println("\n==[All Ledger Payment Records]==");
+                displayAll(ledger,"Payment");
 
                 break;
             case "R":
