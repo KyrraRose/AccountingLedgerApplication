@@ -81,6 +81,7 @@ public class AccountingLedgerApp {
                 }
 
             }
+            ledger.sort();
 
             bufReader.close();
         } catch (IOException e) {
@@ -150,8 +151,7 @@ public class AccountingLedgerApp {
 
             }
             System.out.println("\n----");
-            System.out.println("Press [ENTER] to continue..");
-            scanner.nextLine();
+
 
 
         }
@@ -220,8 +220,6 @@ public class AccountingLedgerApp {
 
             }
             System.out.println("\n----");
-            System.out.println("Press [ENTER] to continue..");
-            scanner.nextLine();
 
         }
 
@@ -255,7 +253,7 @@ public class AccountingLedgerApp {
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
             }else if (type.equals("YTD") && (t.getDate().getYear()==LocalDate.now().getYear())){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
-            }else if (type.equals("Vendor") && (t.getVendor().toLowerCase().equals(vendorSearch))){
+            }else if (type.equals("Vendor") && (t.getVendor().toLowerCase().equalsIgnoreCase(vendorSearch))){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
             }
         }
@@ -340,18 +338,18 @@ public class AccountingLedgerApp {
             case "M":
                 //MTD
                 System.out.println("\n==[Report: Month-to-Date]==");
-                displayLedger(ledger,"MTD");
+                displayReport(ledger,"MTD","");
                 break;
             case "P":
                 //PrevMonth
                 System.out.println("\n==[Report: Previous Month]==");
-                displayLedger(ledger,"PrevMonth");
+                displayReport(ledger,"PrevMonth","");
 
                 break;
             case "Y":
                 //YTD
                 System.out.println("\n==[Report: Year-to-Date]==");
-                displayLedger(ledger,"YTD");
+                displayReport(ledger,"YTD","");
 
                 break;
             case "V":
@@ -366,6 +364,7 @@ public class AccountingLedgerApp {
                 //Custom Search
                 //String type = scanner.nextLine();
                 //System.out.printf("\n==[Report: %s Search]==",type);
+                System.out.println("Custom functionality coming soon");
                 break;
             case "B":
                 System.out.println("Returning [HOME]!");
