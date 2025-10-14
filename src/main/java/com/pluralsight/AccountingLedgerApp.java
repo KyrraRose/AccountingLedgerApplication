@@ -45,7 +45,7 @@ public class AccountingLedgerApp {
             case "L":
                 //display ledger!
                 ledgerMenu();
-                ledgerSelector(ledger);
+                ledgerSelector(scanner,ledger);
                 break;
             case "X":
                 System.out.println("Exiting - Have a Nice Day!");
@@ -230,14 +230,32 @@ public class AccountingLedgerApp {
 
     }
 
-    public static void displayAll(ArrayList<Transaction> ledger, String type){
+    public static void displayLedger(ArrayList<Transaction> ledger, String type){
         //Let's not make three separate methods:
+
         for(Transaction t : ledger){
             if (type.equals("All")) {
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
             }else if (type.equals("Deposit") && t.getAmount()>0){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
             }else if (type.equals("Payment") && t.getAmount()<0){
+                displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }
+
+        }
+        System.out.println("------------");
+    }
+    public static void displayReport(ArrayList<Transaction> ledger, String type,String vendorSearch){
+        //Let's not make three separate methods:
+
+        for(Transaction t : ledger){
+            if (type.equals("MTD") && (t.getDate().getYear()==LocalDate.now().getYear() && t.getDate().getMonth()==(LocalDate.now().getMonth()))){
+                displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }else if (type.equals("PrevMonth") && t.getDate().isAfter(LocalDate.now().minusMonths(1))){
+                displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }else if (type.equals("YTD") && (t.getDate().getYear()==LocalDate.now().getYear())){
+                displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+            }else if (type.equals("Vendor") && (t.getVendor().toLowerCase().equals(vendorSearch))){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
             }
         }
@@ -263,9 +281,8 @@ public class AccountingLedgerApp {
         System.out.println("  [R] Reports");
         System.out.println("  [H] Home");
     }
-    public static void ledgerSelector(ArrayList<Transaction> ledger){
+    public static void ledgerSelector(Scanner scanner,ArrayList<Transaction> ledger){
 
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Type Here: ");
         String choice = scanner.nextLine().trim().toUpperCase();
 
@@ -273,22 +290,25 @@ public class AccountingLedgerApp {
             case "A":
                 //Display All
                 System.out.println("\n==[All Ledger Transaction Records]==");
-                displayAll(ledger,"All");
+                displayLedger(ledger,"All");
                 break;
             case "D":
                 //Display Deposits
                 System.out.println("\n==[All Ledger Deposit Records]==");
-                displayAll(ledger,"Deposit");
+                displayLedger(ledger,"Deposit");
 
                 break;
             case "P":
                 //Display Payments
                 System.out.println("\n==[All Ledger Payment Records]==");
-                displayAll(ledger,"Payment");
+                displayLedger(ledger,"Payment");
 
                 break;
             case "R":
                 //Reports
+                reportMenu();
+                reportSelector(scanner,ledger);
+
 
                 break;
             case "H":
@@ -298,5 +318,62 @@ public class AccountingLedgerApp {
                 System.out.println("Input not recognized, try again!");
         }
     }
+    public static void reportMenu(){
+        System.out.println();
+        System.out.println("       ==[Run a Report]==       ");
+        System.out.println("Which report do you want to run?");
+        System.out.println("  [M] Month to Date");
+        System.out.println("  [P] Previous Month");
+        System.out.println("  [Y] Previous Year");
+        System.out.println("  [V] Search by Vendor");
+        System.out.println("  [S] Custom Search");
+        System.out.println("  [B] Back");
+        //actually numbered options might be better - less mental load by typists
+    }
+    public static void reportSelector(Scanner scanner,ArrayList<Transaction> ledger){
+
+
+        System.out.print("Type Here: ");
+        String choice = scanner.nextLine().trim().toUpperCase();
+
+        switch (choice) {
+            case "M":
+                //MTD
+                System.out.println("\n==[Report: Month-to-Date]==");
+                displayLedger(ledger,"MTD");
+                break;
+            case "P":
+                //PrevMonth
+                System.out.println("\n==[Report: Previous Month]==");
+                displayLedger(ledger,"PrevMonth");
+
+                break;
+            case "Y":
+                //YTD
+                System.out.println("\n==[Report: Year-to-Date]==");
+                displayLedger(ledger,"YTD");
+
+                break;
+            case "V":
+                //Vendor
+                System.out.print("What is the name of the vendor?\nType Here: ");
+                String vendorSearch = scanner.nextLine().trim();
+                System.out.printf("Searching for %s...",vendorSearch);
+                System.out.println("\n==[Report: Vendor Search]==");
+                displayReport(ledger,"Vendor",vendorSearch);
+                break;
+            case "S":
+                //Custom Search
+                //String type = scanner.nextLine();
+                //System.out.printf("\n==[Report: %s Search]==",type);
+                break;
+            case "B":
+                System.out.println("Returning [HOME]!");
+                break;
+            default:
+                System.out.println("Input not recognized, try again!");
+        }
+    }
+
 
 }
