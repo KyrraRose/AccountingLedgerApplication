@@ -4,8 +4,7 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 public class AccountingLedgerApp {
     public static void main(String[] args) {
@@ -81,7 +80,8 @@ public class AccountingLedgerApp {
                 }
 
             }
-            ledger.sort();
+
+            Collections.sort(ledger);
 
             bufReader.close();
         } catch (IOException e) {

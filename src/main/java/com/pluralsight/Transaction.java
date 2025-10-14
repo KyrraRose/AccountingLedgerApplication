@@ -3,7 +3,7 @@ package com.pluralsight;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Transaction {
+public class Transaction implements Comparable<Transaction> {
     private LocalDate date;
     private LocalTime time;
     private String description,vendor;
@@ -56,5 +56,13 @@ public class Transaction {
     public void setAmount(double amount) {
         this.amount = amount;
     }
-
+    //I've learned about comparables
+    @Override
+    public int compareTo(Transaction that) {
+        if(this.date.isBefore(that.date)){
+            return 1;
+        }else{
+            return -1;
+        }
+    }
 }
