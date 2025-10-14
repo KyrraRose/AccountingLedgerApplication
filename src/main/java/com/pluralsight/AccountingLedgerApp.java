@@ -390,7 +390,6 @@ public class AccountingLedgerApp {
             endDate = LocalDate.parse(userEndDate, dateFormat);
         }
 
-
         System.out.print("Description: ");
         String userDesc = scanner.nextLine().trim().toLowerCase();
 
