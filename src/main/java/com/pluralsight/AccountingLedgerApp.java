@@ -44,7 +44,8 @@ public class AccountingLedgerApp {
                 break;
             case "L":
                 //display ledger!
-                displayAll(ledger);
+                ledgerMenu();
+                ledgerSelector(ledger);
                 break;
             case "X":
                 System.out.println("Exiting - Have a Nice Day!");
@@ -241,4 +242,46 @@ public class AccountingLedgerApp {
 
 
     }
+    public static void ledgerMenu(){
+        System.out.println();
+        System.out.println("     ==[Ledger Menu]==");
+        System.out.println("What would you like to view?");
+        System.out.println("  [A] All Transactions");
+        System.out.println("  [D] Deposits");
+        System.out.println("  [P] Payments");
+        System.out.println("  [R] Reports");
+        System.out.println("  [H] Home");
+    }
+    public static void ledgerSelector(ArrayList<Transaction> ledger){
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Type Here: ");
+        String choice = scanner.nextLine().trim().toUpperCase();
+
+        switch (choice) {
+            case "A":
+                //Display All
+                displayAll(ledger);
+                break;
+            case "D":
+                //Display Deposits
+
+
+                break;
+            case "P":
+                //Display Payments
+
+                break;
+            case "R":
+                //Reports
+
+                break;
+            case "H":
+                System.out.println("Returning [HOME]!");
+                break;
+            default:
+                System.out.println("Input not recognized, try again!");
+        }
+    }
+
 }
