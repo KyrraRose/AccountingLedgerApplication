@@ -80,7 +80,8 @@ public class AccountingLedgerApp {
 
             bufReader.close();
         } catch (IOException e) {
-            e.printStackTrace(); //Error chain
+            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return ledger;
     }
@@ -227,16 +228,20 @@ public class AccountingLedgerApp {
         }
         System.out.println("------------");
     }
-    public static void displayReport(ArrayList<Transaction> ledger, String type,String vendorSearch){
+    public static void displayReport(ArrayList<Transaction> ledger, String type,String vendorSearch,String saveAs,String write){
         for(Transaction t : ledger){
             if (type.equals("MTD") && (t.getDate().getYear()==LocalDate.now().getYear() && t.getDate().getMonth()==(LocalDate.now().getMonth()))){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                writeReport(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount(),saveAs,write);
             }else if (type.equals("PrevMonth") && t.getDate().isAfter(LocalDate.now().minusMonths(1))){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                writeReport(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount(),saveAs,write);
             }else if (type.equals("YTD") && (t.getDate().getYear()==LocalDate.now().getYear())){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                writeReport(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount(),saveAs,write);
             }else if (type.equals("Vendor") && (t.getVendor().toLowerCase().equalsIgnoreCase(vendorSearch))) {
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                writeReport(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount(),saveAs,write);
             }
         }
         System.out.println("------------");
@@ -313,6 +318,14 @@ public class AccountingLedgerApp {
     public static void reportSelector(Scanner scanner,ArrayList<Transaction> ledger) {
         System.out.print("Type Here: ");
         String choice = scanner.nextLine().trim().toUpperCase();
+        System.out.print("Would you like to save the report? [Y] [N]\nType Here: ");
+        String write = scanner.nextLine().trim().toUpperCase();
+        String saveAs = "";
+        if (write.contains("Y")){
+            System.out.print("Save As (file name): ");
+            saveAs = scanner.nextLine().trim();
+        }
+
         boolean keepGoing = true;
         while(keepGoing){
 
@@ -320,19 +333,19 @@ public class AccountingLedgerApp {
                 case "M":
                     //MTD
                     System.out.println("\n==[Report: Month-to-Date]==");
-                    displayReport(ledger, "MTD", "");
+                    displayReport(ledger, "MTD", "",saveAs,write);
                     reportMenu();
                     break;
                 case "P":
                     //PrevMonth
                     System.out.println("\n==[Report: Previous Month]==");
-                    displayReport(ledger, "PrevMonth", "");
+                    displayReport(ledger, "PrevMonth", "",saveAs,write);
                     reportMenu();
                     break;
                 case "Y":
                     //YTD
                     System.out.println("\n==[Report: Year-to-Date]==");
-                    displayReport(ledger, "YTD", "");
+                    displayReport(ledger, "YTD", "",saveAs,write);
                     reportMenu();
                     break;
                 case "V":
@@ -341,12 +354,12 @@ public class AccountingLedgerApp {
                     String vendorSearch = scanner.nextLine().trim();
                     System.out.printf("Searching for %s...", vendorSearch);
                     System.out.println("\n==[Report: Vendor Search]==");
-                    displayReport(ledger, "Vendor", vendorSearch);
+                    displayReport(ledger, "Vendor", vendorSearch,saveAs,write);
                     reportMenu();
                     break;
                 case "C":
                     System.out.println("\n==[Report: Custom Search]==");
-                    customSearch(scanner, ledger);
+                    customSearch(scanner, ledger,saveAs,write);
                     reportMenu();
                     break;
                 case "B":
@@ -360,7 +373,7 @@ public class AccountingLedgerApp {
             }
         }
     }
-    public static void customSearch(Scanner scanner,ArrayList<Transaction> ledger){
+    public static void customSearch(Scanner scanner,ArrayList<Transaction> ledger,String saveAs,String write){
         //this one might be a bit chunky
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         //info gathering
@@ -391,9 +404,9 @@ public class AccountingLedgerApp {
         if (!userAmount.isEmpty()) {
             amount = Double.parseDouble(userAmount);
         }
-        searchFilter(ledger,startDate,endDate,userDesc,userVendor,amount);
+        searchFilter(ledger,startDate,endDate,userDesc,userVendor,amount,saveAs,write);
     }
-    public static void searchFilter(ArrayList<Transaction> ledger,LocalDate startDate,LocalDate endDate,String userDesc,String userVendor, double userAmount){
+    public static void searchFilter(ArrayList<Transaction> ledger,LocalDate startDate,LocalDate endDate,String userDesc,String userVendor, double userAmount,String saveAs,String write){
         ArrayList<Transaction> filtered = new ArrayList<>();
         for (Transaction t : ledger){
             if (t.getDate().isAfter(startDate)){
@@ -418,9 +431,27 @@ public class AccountingLedgerApp {
             System.out.println("==[Filtered Search Results]==");
             for (Transaction t : filtered){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+                writeReport(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount(),saveAs,write);
             }
         }else{
             System.out.println("[No results found, try again]");
         }
+    }
+    public static void writeReport(LocalDate date,LocalTime time,String description,String vendor,double amount,String saveAs,String write){
+       if(write.contains("Y")) {
+           try {
+               BufferedWriter buffWriter = new BufferedWriter(new FileWriter(saveAs + ".csv"));
+               if (amount >= 0) {
+                   buffWriter.newLine();
+                   buffWriter.write(String.format("%tD|%tr|%s|%s|$%.2f\n", date, time, description, vendor, amount));
+               } else {
+                   buffWriter.newLine();
+                   buffWriter.write(String.format("%tD|%tr|%s|%s|-$%.2f\n", date, time, description, vendor, Math.abs(amount)));
+               }
+           } catch (Exception e) {
+               e.printStackTrace();
+               System.out.println(e.getMessage());
+           }
+       }
     }
 }
