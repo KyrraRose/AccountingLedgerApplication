@@ -33,11 +33,11 @@ public class AccountingLedgerApp {
         switch (choice){
             case "D":
                 //add deposit!
-                addDeposit(scanner,ledger);
+                addDeposit(scanner);
                 break;
             case "P":
                 //make payment!
-                makePayment(scanner,ledger);
+                makePayment(scanner);
                 break;
             case "L":
                 //display ledger!
@@ -85,7 +85,7 @@ public class AccountingLedgerApp {
         }
         return ledger;
     }
-    public static void addDeposit(Scanner scanner,ArrayList<Transaction> ledger){
+    public static void addDeposit(Scanner scanner){
         //ask for info, append to file
         boolean keepGoing = true;
         while(keepGoing) {
@@ -99,7 +99,7 @@ public class AccountingLedgerApp {
 
             System.out.print("Deposit Amount: $");
             double amount = scanner.nextDouble();
-            scanner.nextLine(); //crlf
+            scanner.nextLine(); //carriage return line feed
 
             LocalDate date = LocalDate.now();
             LocalTime time = LocalTime.now();
@@ -154,7 +154,7 @@ public class AccountingLedgerApp {
 
 
     }
-    public static void makePayment(Scanner scanner,ArrayList<Transaction> ledger){
+    public static void makePayment(Scanner scanner){
         //ask for info, append to file
         boolean keepGoing = true;
         while(keepGoing) {
@@ -168,7 +168,7 @@ public class AccountingLedgerApp {
 
             System.out.print("Payment Amount: -$");
             double amount = scanner.nextDouble();
-            scanner.nextLine(); //crlf
+            scanner.nextLine(); //carriage return line feed
 
             LocalDate date = LocalDate.now();
             LocalTime time = LocalTime.now();
