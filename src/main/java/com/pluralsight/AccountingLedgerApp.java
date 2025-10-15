@@ -448,6 +448,7 @@ public class AccountingLedgerApp {
                    buffWriter.newLine();
                    buffWriter.write(String.format("%tD|%tr|%s|%s|-$%.2f\n", date, time, description, vendor, Math.abs(amount)));
                }
+               buffWriter.close();
            } catch (Exception e) {
                e.printStackTrace();
                System.out.println(e.getMessage());
