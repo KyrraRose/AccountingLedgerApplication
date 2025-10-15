@@ -15,7 +15,6 @@ public class AccountingLedgerApp {
             mainMenu();
             menuSelector();
         }
-
     }
     public static void mainMenu(){
         System.out.println();
@@ -26,7 +25,6 @@ public class AccountingLedgerApp {
         System.out.println("  [L] Display Ledger");
         System.out.println("  [X] Exit the Application");
     }
-
     public static void menuSelector(){
         Scanner scanner = new Scanner(System.in);
         System.out.print("Type Here: ");
@@ -58,7 +56,6 @@ public class AccountingLedgerApp {
         System.out.println("Press [ENTER] to continue..");
         scanner.nextLine();
     }
-
     public static ArrayList<Transaction> loadLedger(){
         ArrayList<Transaction> ledger = new ArrayList<>();
         try {
@@ -78,9 +75,7 @@ public class AccountingLedgerApp {
 
                     ledger.add(new Transaction(date, time, description, vendor, amount));
                 }
-
             }
-
             Collections.sort(ledger);
 
             bufReader.close();
@@ -88,9 +83,7 @@ public class AccountingLedgerApp {
             e.printStackTrace(); //Error chain
         }
         return ledger;
-
     }
-
     public static void addDeposit(Scanner scanner,ArrayList<Transaction> ledger){
         //ask for info, append to file
         boolean keepGoing = true;
@@ -160,7 +153,6 @@ public class AccountingLedgerApp {
 
 
     }
-
     public static void makePayment(Scanner scanner,ArrayList<Transaction> ledger){
         //ask for info, append to file
         boolean keepGoing = true;
@@ -194,7 +186,6 @@ public class AccountingLedgerApp {
                 String userTime = scanner.nextLine().trim().toUpperCase();
                 DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm");
                 time = LocalTime.parse(userTime, timeFormat);
-
             }
 
             System.out.println("\n==[Payment Entry Preview]==");
@@ -217,17 +208,10 @@ public class AccountingLedgerApp {
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                 }
-
             }
             System.out.println("\n----");
-
         }
-
-
-
-
     }
-
     public static void displayLedger(ArrayList<Transaction> ledger, String type){
         //Let's not make three separate methods:
 
@@ -244,8 +228,6 @@ public class AccountingLedgerApp {
         System.out.println("------------");
     }
     public static void displayReport(ArrayList<Transaction> ledger, String type,String vendorSearch){
-        //Let's not make three separate methods:
-
         for(Transaction t : ledger){
             if (type.equals("MTD") && (t.getDate().getYear()==LocalDate.now().getYear() && t.getDate().getMonth()==(LocalDate.now().getMonth()))){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
@@ -253,21 +235,18 @@ public class AccountingLedgerApp {
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
             }else if (type.equals("YTD") && (t.getDate().getYear()==LocalDate.now().getYear())){
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
-            }else if (type.equals("Vendor") && (t.getVendor().toLowerCase().equalsIgnoreCase(vendorSearch))){
+            }else if (type.equals("Vendor") && (t.getVendor().toLowerCase().equalsIgnoreCase(vendorSearch))) {
                 displayTransaction(t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
             }
         }
         System.out.println("------------");
     }
-
     public static void displayTransaction(LocalDate date,LocalTime time,String description,String vendor,double amount){
         if (amount >= 0){
             System.out.printf("%tD|%tr|%s|%s|$%.2f\n", date, time, description, vendor, amount);
         }else{
             System.out.printf("%tD|%tr|%s|%s|-$%.2f\n", date, time, description, vendor, Math.abs(amount));
         }
-
-
     }
     public static void ledgerMenu(){
         System.out.println();
@@ -283,37 +262,40 @@ public class AccountingLedgerApp {
 
         System.out.print("Type Here: ");
         String choice = scanner.nextLine().trim().toUpperCase();
+        boolean keepGoing = true;
 
-        switch (choice) {
-            case "A":
-                //Display All
-                System.out.println("\n==[All Ledger Transaction Records]==");
-                displayLedger(ledger,"All");
-                break;
-            case "D":
-                //Display Deposits
-                System.out.println("\n==[All Ledger Deposit Records]==");
-                displayLedger(ledger,"Deposit");
-
-                break;
-            case "P":
-                //Display Payments
-                System.out.println("\n==[All Ledger Payment Records]==");
-                displayLedger(ledger,"Payment");
-
-                break;
-            case "R":
-                //Reports
-                reportMenu();
-                reportSelector(scanner,ledger);
-
-
-                break;
-            case "H":
-                System.out.println("Returning [HOME]!");
-                break;
-            default:
-                System.out.println("Input not recognized, try again!");
+        while (keepGoing) {
+            switch (choice) {
+                case "A":
+                    //Display All
+                    System.out.println("\n==[All Ledger Transaction Records]==");
+                    displayLedger(ledger, "All");
+                    ledgerMenu();
+                    break;
+                case "D":
+                    //Display Deposits
+                    System.out.println("\n==[All Ledger Deposit Records]==");
+                    displayLedger(ledger, "Deposit");
+                    ledgerMenu();
+                    break;
+                case "P":
+                    //Display Payments
+                    System.out.println("\n==[All Ledger Payment Records]==");
+                    displayLedger(ledger, "Payment");
+                    ledgerMenu();
+                    break;
+                case "R":
+                    //Reports
+                    reportMenu();
+                    reportSelector(scanner, ledger);
+                    break;
+                case "H":
+                    System.out.println("Returning [HOME]!");
+                    keepGoing = false;
+                    break;
+                default:
+                    System.out.println("Input not recognized, try again!");
+            }
         }
     }
     public static void reportMenu(){
@@ -328,47 +310,54 @@ public class AccountingLedgerApp {
         System.out.println("  [B] Back");
         //actually numbered options might be better - less mental load by typists
     }
-    public static void reportSelector(Scanner scanner,ArrayList<Transaction> ledger){
-
-
+    public static void reportSelector(Scanner scanner,ArrayList<Transaction> ledger) {
         System.out.print("Type Here: ");
         String choice = scanner.nextLine().trim().toUpperCase();
+        boolean keepGoing = true;
+        while(keepGoing){
 
-        switch (choice) {
-            case "M":
-                //MTD
-                System.out.println("\n==[Report: Month-to-Date]==");
-                displayReport(ledger,"MTD","");
-                break;
-            case "P":
-                //PrevMonth
-                System.out.println("\n==[Report: Previous Month]==");
-                displayReport(ledger,"PrevMonth","");
-
-                break;
-            case "Y":
-                //YTD
-                System.out.println("\n==[Report: Year-to-Date]==");
-                displayReport(ledger,"YTD","");
-
-                break;
-            case "V":
-                //Vendor
-                System.out.print("What is the name of the vendor?\nType Here: ");
-                String vendorSearch = scanner.nextLine().trim();
-                System.out.printf("Searching for %s...",vendorSearch);
-                System.out.println("\n==[Report: Vendor Search]==");
-                displayReport(ledger,"Vendor",vendorSearch);
-                break;
-            case "C":
-                System.out.println("\n==[Report: Custom Search]==");
-                customSearch(scanner,ledger);
-                break;
-            case "B":
-                System.out.println("Returning [HOME]!");
-                break;
-            default:
-                System.out.println("Input not recognized, try again!");
+            switch (choice) {
+                case "M":
+                    //MTD
+                    System.out.println("\n==[Report: Month-to-Date]==");
+                    displayReport(ledger, "MTD", "");
+                    reportMenu();
+                    break;
+                case "P":
+                    //PrevMonth
+                    System.out.println("\n==[Report: Previous Month]==");
+                    displayReport(ledger, "PrevMonth", "");
+                    reportMenu();
+                    break;
+                case "Y":
+                    //YTD
+                    System.out.println("\n==[Report: Year-to-Date]==");
+                    displayReport(ledger, "YTD", "");
+                    reportMenu();
+                    break;
+                case "V":
+                    //Vendor
+                    System.out.print("What is the name of the vendor?\nType Here: ");
+                    String vendorSearch = scanner.nextLine().trim();
+                    System.out.printf("Searching for %s...", vendorSearch);
+                    System.out.println("\n==[Report: Vendor Search]==");
+                    displayReport(ledger, "Vendor", vendorSearch);
+                    reportMenu();
+                    break;
+                case "C":
+                    System.out.println("\n==[Report: Custom Search]==");
+                    customSearch(scanner, ledger);
+                    reportMenu();
+                    break;
+                case "B":
+                    System.out.println("Returning [HOME]!");
+                    keepGoing = false;
+                    break;
+                default:
+                    System.out.println("Input not recognized, try again!");
+                    System.out.println("------");
+                    reportMenu();
+            }
         }
     }
     public static void customSearch(Scanner scanner,ArrayList<Transaction> ledger){
@@ -402,14 +391,10 @@ public class AccountingLedgerApp {
         if (!userAmount.isEmpty()) {
             amount = Double.parseDouble(userAmount);
         }
-
-        filteredSearch(ledger,startDate,endDate,userDesc,userVendor,amount);
-
-
+        searchFilter(ledger,startDate,endDate,userDesc,userVendor,amount);
     }
-    public static void filteredSearch(ArrayList<Transaction> ledger,LocalDate startDate,LocalDate endDate,String userDesc,String userVendor, double userAmount){
+    public static void searchFilter(ArrayList<Transaction> ledger,LocalDate startDate,LocalDate endDate,String userDesc,String userVendor, double userAmount){
         ArrayList<Transaction> filtered = new ArrayList<>();
-
         for (Transaction t : ledger){
             if (t.getDate().isAfter(startDate)){
                 filtered.add(t);
@@ -418,7 +403,6 @@ public class AccountingLedgerApp {
                 filtered.remove(t);
             }
         }
-
         if (!filtered.isEmpty()){
             for (Transaction t : filtered){
                 if (!userDesc.isEmpty() && !t.getDescription().toLowerCase().contains(userDesc)){
@@ -429,7 +413,6 @@ public class AccountingLedgerApp {
                     filtered.remove(t);
                 }
             }
-
         }
         if (!filtered.isEmpty()){
             System.out.println("==[Filtered Search Results]==");
@@ -439,8 +422,5 @@ public class AccountingLedgerApp {
         }else{
             System.out.println("[No results found, try again]");
         }
-
     }
-
-
 }
