@@ -52,7 +52,7 @@ public class AccountingLedgerApp {
            break;
            case "X":
               pause();
-              typeItOut("\nExiting...\nHave a Nice Day!");
+              typeItOut("\nExiting...\nHave a Nice Day!\n");
               scanner.close();
               System.exit(0);
            break;
@@ -313,7 +313,7 @@ public class AccountingLedgerApp {
                     break;
                 case "H":
                     pause();
-                    System.out.println("\nReturning Home...");
+                    typeItOut("\nReturning Home...");
                     keepGoing = false;
                     pressEnter(scanner);
                     break;
@@ -405,8 +405,7 @@ public class AccountingLedgerApp {
                     break;
                 case "B":
                     pause();
-                    System.out.println("\nReturning!");
-                    typeItOut("\n------\n");
+                    typeItOut("\nReturning!");
                     keepGoing = false;
                     pressEnter(scanner);
                     ledgerMenu();
