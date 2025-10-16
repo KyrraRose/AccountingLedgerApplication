@@ -425,45 +425,14 @@ public class AccountingLedgerApp {
         try {
             ArrayList<Transaction> filtered = new ArrayList<>();
 
-            // FIX FOR THURSDAY, MAKE ITEMS ADD TO LIST WHEN HIT INSTEAD OF REMOVE using if and OR
 
-            for (Transaction t : ledger) {
-                if (t.getDate().isAfter(startDate)) {
+           for (Transaction t : ledger) {
+                if (((startDate.isEqual(t.getDate()) || startDate.isBefore(t.getDate()))&& (endDate.isEqual(t.getDate())|| endDate.isAfter(t.getDate())))&&
+                        (userDesc.isEmpty() || t.getDescription().toLowerCase().contains(userDesc)) &&
+                        (userVendor.isEmpty() || t.getVendor().toLowerCase().contains(userVendor)) &&
+                        (userAmount == 0 || t.getAmount() == userAmount)) {
                     filtered.add(t);
                 }
-                if (t.getDate().isAfter(endDate)) {
-                    filtered.remove(t);
-                }
-            }
-
-           /** for (Transaction t : filtered) {
-                if (!userDesc.isEmpty() && !t.getDescription().toLowerCase().contains(userDesc)) {
-                    filtered.remove(t);
-                }
-                if (!userVendor.isEmpty() && !t.getVendor().toLowerCase().contains(userVendor)) {
-                    filtered.remove(t);
-                }
-                if (userAmount != 0 && t.getAmount() != userAmount) {
-                    filtered.remove(t);
-                }
-            }*/
-            for (Transaction t : filtered) {
-                if (!userDesc.equals("")){
-                    if (!t.getDescription().toLowerCase().contains(userDesc)){
-                        filtered.remove(t);
-                    }
-                }
-                if (userAmount != 0){
-                    if (t.getAmount() != userAmount){
-                        filtered.remove(t);
-                    }
-                }
-                if (!userVendor.equals("")){
-                    if ( !t.getVendor().toLowerCase().contains(userVendor)){
-                        filtered.remove(t);
-                    }
-                }
-
             }
 
             if (!filtered.isEmpty()) {
